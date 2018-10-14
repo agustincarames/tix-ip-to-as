@@ -1,14 +1,17 @@
-FROM python:3.4.7-slim
+FROM python:3-slim
 
-RUN apt update && apt install -y \
+# Install app dependencies
+RUN apt-get update && apt-get install -y \
 	gcc \
-	libmysqlclient-dev \
+	libmariadbclient-dev \
 	python-mysqldb
 
 WORKDIR /root
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install -r requirements.txt \
+	&& rm -rf /root/.cache
 
+# Bundle app source
 WORKDIR /root/iptoas
 COPY *.py ./
 CMD ["python", "main.py"]
