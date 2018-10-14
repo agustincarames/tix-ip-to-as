@@ -13,7 +13,7 @@ def _conectar():
     db_host = 'localhost'
     usuario = 'tix'
     clave = 'tix'
-    base_de_datos = 'iptoas'
+    base_de_datos = 'tix'
     conndb = mdb.connect(host=db_host, user=usuario, passwd=clave, db=base_de_datos)
     cursor = conndb.cursor()
     return cursor, conndb
