@@ -101,7 +101,7 @@ def build_files():
                          compPath = conf.tmpCompPath,
                          outPath = conf.tmpConcatRvPath + 'rv')
     
-    #create_db.nombre_as(conf.tmpConcatAsnPath + 'asn')
-    #create_db.routerview(conf.tmpConcatRvPath + 'rv')
+    create_db.nombre_as(conf.tmpConcatAsnPath + 'asn')
+    create_db.routerview(conf.tmpConcatRvPath + 'rv')
     
-    #create_db.rotate_tables()
+    create_db.rotate_tables()
