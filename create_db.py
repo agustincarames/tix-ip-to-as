@@ -3,17 +3,17 @@
 
 import MySQLdb as mdb
 import time
+import os
 
 '''
 la base de datos iptoas debe existir
 '''
 
-#TODO: Recibir estos valores por configuracion
 def _conectar():
-    db_host = 'localhost'
-    usuario = 'tix'
-    clave = 'tix'
-    base_de_datos = 'tix'
+    db_host = os.environ.get('MYSQL_HOST')
+    usuario = os.environ.get('MYSQL_USER')
+    clave = os.environ.get('MYSQL_PASSWORD')
+    base_de_datos = os.environ.get('MYSQL_DATABASE')
     conndb = mdb.connect(host=db_host, user=usuario, passwd=clave, db=base_de_datos)
     cursor = conndb.cursor()
     return cursor, conndb
@@ -33,8 +33,8 @@ def nombre_as(archivoasn):
             datos = linea.split('\t')
             if len(datos) == 2:
                 nodo = datos[0].strip()
-                name = unicode(datos[1].strip(), 'latin-1')
-                cursor.execute('INSERT INTO iptoas.namenodestmp (noden, name) VALUES (%s,%s) ON DUPLICATE KEY UPDATE name=name;', (nodo,name))
+                name = datos[1].strip()
+                cursor.execute('INSERT INTO namenodestmp (noden, name) VALUES (%s,%s) ON DUPLICATE KEY UPDATE name=name;', (nodo, name))
         conndb.commit()
 
     cursor.close()
@@ -55,7 +55,7 @@ def routerview(archivorouter):
                 ip = datos[0].strip()
                 mask = datos[1].strip()
                 nodo = datos [2].strip()
-                cursor.execute('INSERT INTO iptoas.routerviews_tmp (noderouter, ip_router, mask) VALUES (%s,%s,%s);', (nodo, ip, mask))
+                cursor.execute('INSERT INTO routerviews_tmp (noderouter, ip_router, mask) VALUES (%s,%s,%s);', (nodo, ip, mask))
         conndb.commit()
     
     cursor.close()
