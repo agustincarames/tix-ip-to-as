@@ -14,7 +14,7 @@ def _conectar():
     usuario = os.environ.get('MYSQL_USER')
     clave = os.environ.get('MYSQL_PASSWORD')
     base_de_datos = os.environ.get('MYSQL_DATABASE')
-    conndb = mdb.connect(host=db_host, user=usuario, passwd=clave, db=base_de_datos)
+    conndb = mdb.connect(host=db_host, user=usuario, passwd=clave, db=base_de_datos, charset='utf8', use_unicode=True)
     cursor = conndb.cursor()
     return cursor, conndb
 
@@ -28,7 +28,7 @@ def nombre_as(archivoasn):
 
     with open(archivoasn, 'r') as dataname:
         cursor.execute('DROP TABLE IF EXISTS namenodestmp;')
-        cursor.execute('CREATE TABLE namenodestmp (noden INT, name TEXT, PRIMARY KEY (noden) );')
+        cursor.execute('CREATE TABLE namenodestmp (noden INT, name TEXT, PRIMARY KEY (noden)) CHARACTER SET utf8mb4;')
         for linea in dataname:
             datos = linea.split('\t')
             if len(datos) == 2:
@@ -48,7 +48,7 @@ def routerview(archivorouter):
 
     with open(archivorouter, 'r') as datarouter:
         cursor.execute('DROP TABLE IF EXISTS routerviews_tmp;')
-        cursor.execute('CREATE TABLE routerviews_tmp (router_id int AUTO_INCREMENT, noderouter BIGINT, ip_router TEXT, mask INT, PRIMARY KEY (router_id) );')
+        cursor.execute('CREATE TABLE routerviews_tmp (router_id int AUTO_INCREMENT, noderouter BIGINT, ip_router TEXT, mask INT, PRIMARY KEY (router_id)) CHARACTER SET utf8mb4;')
         for linea in datarouter:
             datos = linea.split('\t')
             if len(datos) == 3:
