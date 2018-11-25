@@ -40,6 +40,13 @@ def nombre_as(archivoasn):
     cursor.close()
     conndb.close()
 
+def ip_to_int(ip):
+    result = 0
+    octets = [int(i) for i in ip.split('.')]
+    for n in octets:
+        result = result * 256 + n
+    return result
+
 def routerview(archivorouter):
     '''
     archivorouter: archivo caida routerviews contiene ip mascara y numero de as
@@ -48,14 +55,15 @@ def routerview(archivorouter):
 
     with open(archivorouter, 'r') as datarouter:
         cursor.execute('DROP TABLE IF EXISTS routerviews_tmp;')
-        cursor.execute('CREATE TABLE routerviews_tmp (router_id int AUTO_INCREMENT, noderouter BIGINT, ip_router TEXT, mask INT, PRIMARY KEY (router_id)) CHARACTER SET utf8mb4;')
+        cursor.execute('CREATE TABLE routerviews_tmp (router_id int AUTO_INCREMENT, noderouter BIGINT, ip_router TEXT, bin_ip_router BIGINT, mask INT, PRIMARY KEY (router_id)) CHARACTER SET utf8mb4;')
         for linea in datarouter:
             datos = linea.split('\t')
             if len(datos) == 3:
                 ip = datos[0].strip()
+                ip_bin = ip_to_int(ip)
                 mask = datos[1].strip()
-                nodo = datos [2].strip()
-                cursor.execute('INSERT INTO routerviews_tmp (noderouter, ip_router, mask) VALUES (%s,%s,%s);', (nodo, ip, mask))
+                nodo = datos[2].strip()
+                cursor.execute('INSERT INTO routerviews_tmp (noderouter, ip_router, bin_ip_router, mask) VALUES (%s,%s,%s,%s);', (nodo, ip, ip_bin, mask))
         conndb.commit()
     
     cursor.close()
@@ -72,6 +80,7 @@ def rotate_tables():
     cursor.execute('DROP TABLE IF EXISTS routerviews;')
     cursor.execute('CREATE TABLE routerviews LIKE routerviews_tmp;')
     cursor.execute('INSERT INTO routerviews SELECT * FROM routerviews_tmp;')
+    cursor.execute('CREATE INDEX routerviews_mask_ip ON routerviews (mask, bin_ip_router);')
     cursor.execute('DROP TABLE IF EXISTS routerviews_tmp;')
     conndb.commit()
     
